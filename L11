@@ -1,0 +1,39 @@
+{{-- BEGIN (write your solution here) --}}
+@extends('layouts.app')
+
+@section('content')
+    @foreach($article_categories as $article_category)
+        <h2>{{  $article_category->name }}</h2>
+        <p>{{  $article_category->description  }}</p>
+    @endforeach
+    {{ $article_categories->links() }}
+@endsection
+{{-- END --}}
+
+
+            {{-- BEGIN (write your solution here) --}}
+            <a href="{{ route('article_categories.index') }}">Article Categories</a>
+            {{-- END --}}
+
+
+// BEGIN (write your solution here)
+Route::get('article_categories', [ArticleCategoryController::class, 'index'])
+    ->name('article_categories.index');
+// END
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\ArticleCategory;
+
+class ArticleCategoryController extends Controller
+{
+    public function index()
+    {
+        $article_categories = ArticleCategory::paginate(10);
+        return view('article_category.index', compact('article_categories'));
+    }
+}

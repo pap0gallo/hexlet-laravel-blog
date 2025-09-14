@@ -1,0 +1,74 @@
+public function create()
+    {
+        $category = new ArticleCategory();
+        return view('article_category.create', compact('category'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate(
+            [
+                'name' => 'required|max:100',
+                'description' => 'required|min:200',
+                'state' => 'in:draft,published'
+            ]
+        );
+        $category = new ArticleCategory();
+
+        $category->fill($data);
+        $category->save();
+
+        return redirect()->route('article_category.index');
+    }
+
+
+
+    @extends('layouts.app')
+
+    @section('content')
+        {{-- BEGIN (write your solution here) --}}
+        @if($errors->any())
+            <div>
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li> {{ $error }} </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        {{ html()->modelForm($category, 'POST', route('article_categories.store')->open()) }}
+            {{ html()->label('Имя', 'name') }}
+            {{ html()->input('text', 'name') }}
+            {{ html()->label('Описание', 'description') }}
+            {{ html()->textarea('description') }}
+            {{ html()->select('state', [
+                'draft' => 'Черновик',
+            'published' => 'Опубликовано'
+            ], old('state', $category->state ?? null)) }}
+            {{ html()->submit('Создать') }}
+        {{ html()->closeModelForm() }}
+        {{-- END --}}
+    @endsection
+
+
+@extends('layouts.app')
+
+@section('content')
+    {{-- BEGIN (write your solution here) --}}
+    <a href="{{ route('article_categories.create') }}">Создать категорию</a>
+    {{-- END --}}
+    <h1>Список категорий статей</h1>
+    @foreach($articleCategories as $category)
+        <h2><a href="{{ route('article_categories.show', $category) }}">{{$category->name}}</a></h2>
+        <div>{{$category->description}}</div>
+    @endforeach
+@endsection
+
+
+// BEGIN (write your solution here)
+Route::get('article_categories/create', [ArticleCategoryController::class, 'create'])
+    ->name('article_categories.create');
+
+Route::post('article_categories', [ArticleCategoryController::class, 'store'])
+    ->name('article_categories.store');
+// END

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateArticleRequest extends FormRequest
 {
@@ -23,7 +24,10 @@ class UpdateArticleRequest extends FormRequest
     {
         $id = $this->route('article')?->id;
         return [
-            'name' => "required|unique:articles,name,{$id}",
+            'name' => [
+                'required',
+                Rule::unique('articles', 'name')->ignore($id),
+                ],
             'body' => 'required|min:20'
         ];
     }

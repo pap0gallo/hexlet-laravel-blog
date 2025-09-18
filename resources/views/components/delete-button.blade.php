@@ -1,3 +1,5 @@
+@props(['action'])
+
 <form action="{{ $action }}" method="POST" style="display:inline">
     @csrf
     @method('DELETE')
